@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>To-Do List</title>
+  <style>
+    /* Basic page styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      padding-top: 50px;
+    }
+
+    /* Container box styling */
+    .container {
+      background: #fff;
+      padding: 20px;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Input field */
+    #taskInput {
+      width: 70%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    /* Add Task button */
+    #addTaskBtn {
+      padding: 8px 15px;
+      margin-left: 10px;
+    }
+
+    /* Remove bullet styling */
+    ul {
+      padding-left: 0;
+    }
+
+    /* Individual task list items */
+    li {
+      list-style: none;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Style for completed tasks */
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    /* Grouping edit/remove buttons */
+    .task-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* General button styling */
+    button {
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    /* Dialog popup box */
+    dialog {
+      padding: 20px;
+      border: none;
+      border-radius: 8px;
+    }
+
+    /* Buttons inside the dialog */
+    .dialog-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- To-Do List container -->
+  <div class="container">
+    <h2>To-Do List</h2>
+    <!-- Input field and button to add new tasks -->
+    <input type="text" id="taskInput" placeholder="Enter new task" />
+    <button id="addTaskBtn">Add Task</button>
+    <!-- Task list will be appended here -->
+    <ul id="taskList"></ul>
+  </div>
+
+  <!-- Dialog popup for editing tasks -->
+  <dialog id="editDialog">
+    <form method="dialog" id="editForm">
+      <label for="editInput">Edit your task:</label>
+      <input type="text" id="editInput" required />
+      <div class="dialog-actions">
+        <button id="saveEditBtn">OK</button>
+        <button type="reset">Cancel</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script>
+    // Get references to DOM elements
+    const taskList = document.getElementById('taskList');
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const editDialog = document.getElementById('editDialog');
+    const editInput = document.getElementById('editInput');
+    const saveEditBtn = document.getElementById('saveEditBtn');
+
+    // Variable to store the task being edited
+    let taskToEdit = null;
+
+    // Add new task when button is clicked
+    addTaskBtn.addEventListener('click', () => {
+      const taskText = taskInput.value.trim(); // Get text and remove whitespace
+      if (taskText === '') return; // Do nothing if input is empty
+
+      // Create a new list item with checkbox, task text, edit and remove buttons
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <input type="checkbox" class="task-check" />
+        <span class="task-text">${taskText}</span>
+        <div class="task-buttons">
+          <button class="edit-btn">Edit</button>
+          <button class="remove-btn">Remove</button>
+        </div>
+      `;
+
+      // Append the new task to the task list
+      taskList.appendChild(li);
+      taskInput.value = ''; // Clear the input
+    });
+
+    // Event delegation for handling clicks on all task-related buttons
+    taskList.addEventListener('click', (e) => {
+      const li = e.target.closest('li'); // Find the clicked task item
+      if (!li) return;
+
+      // Toggle completion status
+      if (e.target.classList.contains('task-check')) {
+        li.classList.toggle('completed');
+      }
+
+      // Remove the task
+      if (e.target.classList.contains('remove-btn')) {
+        taskList.removeChild(li);
+      }
+
+      // Start editing the task
+      if (e.target.classList.contains('edit-btn')) {
+        taskToEdit = li.querySelector('.task-text'); // Save reference to task text
+        editInput.value = taskToEdit.textContent; // Pre-fill dialog input
+        editDialog.showModal(); // Show the dialog
+      }
+    });
+
+    // Save the edited task text when dialog OK is clicked
+    saveEditBtn.addEventListener('click', () => {
+      if (taskToEdit) {
+        taskToEdit.textContent = editInput.value.trim(); // Update text
+        editDialog.close(); // Close the dialog
+      }
+    });
+  </script>
+</body>
+</html>
+
