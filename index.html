@@ -5,18 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>To-Do List</title>
   <style>
-    /* Background and layout */
-    body {
+    /* Global page styling */
+    html, body {
+      margin: 0;
+      padding: 0;
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #667eea, #764ba2);
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding-top: 60px;
+      min-height: 100%;
     }
 
+    body {
+      display: flex;
+      justify-content: center;
+      padding: 60px 20px;
+      box-sizing: border-box;
+    }
+
+    /* Container */
     .container {
       background: #ffffff;
       padding: 30px;
@@ -32,7 +37,7 @@
       margin-bottom: 20px;
     }
 
-    /* Input + Button */
+    /* Input and button row */
     #taskInput {
       width: 65%;
       padding: 10px;
@@ -70,11 +75,13 @@
       align-items: center;
       justify-content: space-between;
       transition: all 0.3s;
+      flex-wrap: wrap;
     }
 
     .task-text {
       margin: 0 10px;
       flex-grow: 1;
+      min-width: 0;
     }
 
     .completed .task-text {
@@ -119,7 +126,7 @@
       accent-color: #667eea;
     }
 
-    /* Dialog styles */
+    /* Dialog styling */
     dialog {
       padding: 20px;
       border: none;
@@ -193,7 +200,7 @@
     const editInput = document.getElementById('editInput');
     const saveEditBtn = document.getElementById('saveEditBtn');
 
-    let taskToEdit = null; // To track the current editable task
+    let taskToEdit = null;
 
     // Add a new task
     addTaskBtn.addEventListener('click', () => {
@@ -210,15 +217,15 @@
         </div>
       `;
       taskList.appendChild(li);
-      taskInput.value = ''; // Clear input field
+      taskInput.value = '';
     });
 
-    // Handle events via delegation
+    // Event delegation for actions
     taskList.addEventListener('click', (e) => {
       const li = e.target.closest('li');
       if (!li) return;
 
-      // Toggle completion
+      // Toggle complete
       if (e.target.classList.contains('task-check')) {
         li.classList.toggle('completed');
       }
@@ -236,7 +243,7 @@
       }
     });
 
-    // Save changes from edit
+    // Save edited task
     saveEditBtn.addEventListener('click', () => {
       if (taskToEdit) {
         taskToEdit.textContent = editInput.value.trim();
@@ -246,5 +253,6 @@
   </script>
 </body>
 </html>
+
 
 
